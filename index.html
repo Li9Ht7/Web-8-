@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gửi Tặng Người Phụ Nữ Tôi Yêu</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        /* Hiệu ứng nền hồng nhạt và font chữ mềm mại */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #fff5f7; 
+            text-align: center; 
+            color: #d81b60; 
+            margin: 0;
+            overflow-x: hidden; /* Chặn cuộn ngang do hiệu ứng rơi */
+        }
+
+        /* Khung thiệp chính */
+        .card { 
+            background: white; 
+            max-width: 450px; 
+            margin: 50px auto; 
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(216, 27, 96, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        img { width: 100%; border-radius: 15px; margin: 15px 0; border: 3px solid #fce4ec; }
+        
+        /* Hiệu ứng Trái tim rơi */
+        .heart {
+            position: fixed;
+            top: -10px;
+            font-size: 20px;
+            color: #ff4081;
+            user-select: none;
+            z-index: 1;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(105vh) rotate(360deg); }
+        }
+
+        .controls { 
+            background: #ffffff; 
+            max-width: 450px; 
+            margin: 20px auto; 
+            padding: 20px; 
+            border-radius: 15px; 
+            text-align: left;
+            border: 1px dashed #ff80ab;
+        }
+
+        input, textarea { width: 92%; margin: 8px 0; padding: 10px; border: 1px solid #f8bbd0; border-radius: 8px; }
+        button { 
+            background: #ff4081; color: white; border: none; padding: 12px 25px; 
+            border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%;
+            transition: 0.3s;
+        }
+        button:hover { background: #c2185b; transform: scale(1.02); }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1 id="display-title">Happy Women's Day! 🌸</h1>
+        <img id="display-img" src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&q=80&w=500" alt="Flowers">
+        <p id="display-wish">Chúc người phụ nữ tuyệt vời nhất luôn xinh đẹp, hạnh phúc và rạng rỡ như những đóa hoa!</p>
+        
+        <audio id="bg-music" loop>
+            <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+        </audio>
+        <button onclick="toggleMusic()" style="width: auto; padding: 5px 15px; font-size: 0.8em;">🎵 Phát/Dừng Nhạc</button>
+    </div>
+
+    <div class="controls">
+        <p style="font-weight: bold; margin-top: 0;">🛠 Tùy chỉnh thiệp:</p>
+        <input type="text" id="input-title" placeholder="Tiêu đề mới...">
+        <textarea id="input-wish" rows="2" placeholder="Lời chúc ngọt ngào..."></textarea>
+        <input type="text" id="input-img" placeholder="Link ảnh (dán URL vào đây)...">
+        <button onclick="updateCard()">Cập nhật & Lấy Mã QR</button>
+        <div id="qrcode" style="margin-top: 15px; display: flex; justify-content: center;"></div>
+    </div>
+
+    <script>
+        // Hàm tạo trái tim rơi
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+            heart.style.opacity = Math.random();
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 5000);
+        }
+        setInterval(createHeart, 300);
+
+        // Cập nhật nội dung
+        function updateCard() {
+            const title = document.getElementById('input-title').value;
+            const wish = document.getElementById('input-wish').value;
+            const img = document.getElementById('input-img').value;
+
+            if (title) document.getElementById('display-title').innerText = title;
+            if (wish) document.getElementById('display-wish').innerText = wish;
+            if (img) document.getElementById('display-img').src = img;
+
+            // Tạo QR cho URL hiện tại
+            document.getElementById('qrcode').innerHTML = "";
+            new QRCode(document.getElementById("qrcode"), {
+                text: window.location.href,
+                width: 100, height: 100
+            });
+        }
+
+        // Điều khiển nhạc
+        function toggleMusic() {
+            const music = document.getElementById('bg-music');
+            return music.paused ? music.play() : music.pause();
+        }
+    </script>
+</body>
+</html>
