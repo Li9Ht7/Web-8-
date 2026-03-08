@@ -36,7 +36,12 @@
 </head>
 <body>
 
-    <div class="card" id="main-card">
+   <div class="card" id="main-card">
+        <div id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px;">
+            <h2 style="color: var(--d);">Bạn có 1 món quà!</h2>
+            <button onclick="openGift()" style="width: auto; padding: 10px 30px;">🎁 Mở Quà Ngay</button>
+        </div>
+
         <h1 id="display-title">Happy Women's Day! 🌸</h1>
         <img id="display-img" src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=500" alt="Ảnh 8/3">
         <p id="display-wish">Chúc bạn một ngày 8/3 thật rạng rỡ và hạnh phúc!</p>
@@ -69,6 +74,40 @@
     </div>
 
     <script>
+        // Biến lưu trữ ID video để phát sau khi nhấn nút
+let currentVideoId = "";
+
+window.onload = function() {
+    const p = new URLSearchParams(window.location.search);
+    if (p.has('t') || p.has('w') || p.has('i')) {
+        document.getElementById('admin-panel').classList.add('hidden');
+        if(p.get('t')) document.getElementById('display-title').innerText = decodeURIComponent(p.get('t'));
+        if(p.get('w')) document.getElementById('display-wish').innerText = decodeURIComponent(p.get('w'));
+        if(p.get('i')) document.getElementById('display-img').src = decodeURIComponent(p.get('i'));
+        
+        // Lưu lại ID nhạc nhưng chưa phát ngay
+        if(p.get('y')) {
+            currentVideoId = p.get('y');
+        }
+    } else {
+        // Nếu là trang tạo link, không hiện lớp phủ mở quà
+        document.getElementById('overlay').classList.add('hidden');
+    }
+};
+
+function openGift() {
+    // 1. Ẩn lớp phủ
+    document.getElementById('overlay').style.display = 'none';
+    
+    // 2. Phát nhạc (Vì người dùng đã tương tác nên trình duyệt sẽ cho phép)
+    if(currentVideoId) {
+        document.getElementById('yt-container').innerHTML = 
+            `<iframe width="0" height="0" src="https://www.youtube.com/embed/${currentVideoId}?autoplay=1&mute=0" frameborder="0" allow="autoplay"></iframe>`;
+    }
+    
+    // 3. Có thể thêm hiệu ứng pháo hoa hoặc rung nhẹ ở đây (nếu muốn)
+    alert("Chúc bạn một ngày 8/3 vui vẻ! 🎵");
+}
         // Hiệu ứng tim rơi
         setInterval(() => {
             const h = document.createElement('div'); h.classList.add('heart');
@@ -130,3 +169,4 @@
     </script>
 </body>
 </html>
+
