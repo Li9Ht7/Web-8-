@@ -73,24 +73,35 @@
             return (match && match[2].length === 11) ? match[2] : null;
         }
 
-        function generateGift() {
-            const t = encodeURIComponent(document.getElementById('input-title').value || "Happy 8/3");
-            const w = encodeURIComponent(document.getElementById('input-wish').value || "Chúc bạn luôn hạnh phúc!");
-            const i = encodeURIComponent(document.getElementById('input-img').value || "");
-            const y = getYTID(document.getElementById('input-youtube').value) || "";
+       function generateGift() {
+    const t = encodeURIComponent(document.getElementById('input-title').value || "Happy 8/3");
+    const w = encodeURIComponent(document.getElementById('input-wish').value || "Chúc bạn luôn hạnh phúc!");
+    const i = encodeURIComponent(document.getElementById('input-img').value || "");
+    const y = getYTID(document.getElementById('input-youtube').value) || "";
 
-            // Tạo một đường link chứa toàn bộ dữ liệu (Kỹ thuật nén dữ liệu vào URL)
-            const baseUrl = window.location.href.split('?')[0];
-            const giftUrl = `${baseUrl}?t=${t}&w=${w}&i=${i}&y=${y}`;
+    // Tạo link quà tặng
+    const baseUrl = window.location.href.split('?')[0];
+    const giftUrl = `${baseUrl}?t=${t}&w=${w}&i=${i}&y=${y}`;
 
-            // Tạo mã QR với link "siêu dài" này
-            document.getElementById('qrcode').innerHTML = "";
-            new QRCode(document.getElementById("qrcode"), {
-                text: giftUrl,
-                width: 180, height: 180
-            });
-            alert("Đã tạo xong mã QR bên dưới! Hãy quét thử để xem kết quả.");
-        }
+    // Hiển thị mã QR to và rõ hơn
+    const qrContainer = document.getElementById('qrcode');
+    qrContainer.innerHTML = ""; 
+    new QRCode(qrContainer, {
+        text: giftUrl,
+        width: 250, // Tăng kích thước
+        height: 250,
+        correctLevel : QRCode.CorrectLevel.L // Giảm mức độ sửa lỗi để các ô vuông thưa hơn
+    });
+
+    // Hiện thêm một ô chứa link để bạn copy đi rút gọn (Bitly/TinyURL)
+    const linkOutput = document.createElement('p');
+    linkOutput.innerHTML = `<strong>Link của bạn (Copy link này đi rút gọn tại Bitly để QR dễ quét hơn):</strong><br>
+    <textarea style="width:100%; font-size:10px;">${giftUrl}</textarea>`;
+    qrContainer.appendChild(linkOutput);
+
+    alert("Đã tạo mã QR to hơn! Nếu vẫn khó quét, hãy copy link phía dưới mã QR và dùng Bitly để rút gọn nhé.");
+}
     </script>
 </body>
 </html>
+
