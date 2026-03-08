@@ -3,169 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chúc Mừng Ngày Quốc Tế Phụ Nữ 8/3</title>
+    <title>Quà Tặng 8/3 Đặc Biệt</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        :root {
-            --primary-pink: #ff69b4;
-            --dark-pink: #d81b60;
-            --bg-color: #fff5f7;
-        }
-
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: var(--bg-color); 
-            text-align: center; 
-            color: var(--dark-pink); 
-            margin: 0;
-            padding: 20px;
-            overflow-x: hidden;
-        }
-
-        /* Hiệu ứng trái tim rơi */
-        .heart {
-            position: fixed;
-            top: -10px;
-            font-size: 20px;
-            color: var(--primary-pink);
-            user-select: none;
-            z-index: 1;
-            animation: fall linear forwards;
-        }
-
-        @keyframes fall {
-            to { transform: translateY(105vh) rotate(360deg); }
-        }
-
-        /* Khung thiệp */
-        .card { 
-            background: white; 
-            max-width: 450px; 
-            margin: 20px auto; 
-            padding: 30px; 
-            border-radius: 20px; 
-            box-shadow: 0 15px 35px rgba(216, 27, 96, 0.15);
-            position: relative;
-            z-index: 10;
-        }
-
-        .card h1 { font-size: 1.8em; margin-bottom: 10px; }
-        .card img { width: 100%; border-radius: 15px; border: 3px solid #ffebee; margin: 15px 0; }
-        .card p { font-size: 1.1em; line-height: 1.6; color: #555; }
-
-        /* Bảng điều khiển */
-        .controls { 
-            background: #ffffff; 
-            max-width: 450px; 
-            margin: 20px auto; 
-            padding: 20px; 
-            border-radius: 15px; 
-            text-align: left;
-            border: 1px dashed var(--primary-pink);
-            position: relative;
-            z-index: 10;
-        }
-
-        label { font-weight: bold; font-size: 0.9em; }
-        input, textarea { 
-            width: 95%; margin: 8px 0 15px 0; padding: 10px; 
-            border: 1px solid #f8bbd0; border-radius: 8px; outline: none;
-        }
-        input:focus { border-color: var(--primary-pink); }
-
-        button { 
-            background: var(--primary-pink); color: white; border: none; 
-            padding: 15px; border-radius: 30px; cursor: pointer; 
-            font-weight: bold; width: 100%; font-size: 1em;
-            transition: 0.3s; box-shadow: 0 4px 10px rgba(255, 105, 180, 0.3);
-        }
-        button:hover { background: var(--dark-pink); transform: translateY(-2px); }
-
-        #qrcode { margin-top: 20px; display: flex; justify-content: center; }
+        :root { --p: #ff69b4; --d: #d81b60; }
+        body { font-family: 'Arial', sans-serif; background: #fff5f7; text-align: center; color: var(--d); margin: 0; padding: 20px; overflow-x: hidden; }
+        .heart { position: fixed; top: -10px; font-size: 20px; color: var(--p); z-index: 1; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
         
-        /* Ẩn trình phát video YouTube */
-        #yt-player-container { display: none; }
+        .card { background: white; max-width: 450px; margin: 20px auto; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; z-index: 10; }
+        .card img { width: 100%; border-radius: 15px; margin: 15px 0; display: block; min-height: 200px; background: #eee; }
+        
+        /* Bảng điều khiển - Sẽ ẩn đi khi người nhận mở web */
+        .controls { background: white; max-width: 450px; margin: 20px auto; padding: 20px; border-radius: 15px; text-align: left; border: 1px dashed var(--p); z-index: 10; position: relative; }
+        input, textarea { width: 92%; margin: 8px 0; padding: 10px; border: 1px solid #f8bbd0; border-radius: 8px; }
+        button { background: var(--p); color: white; border: none; padding: 15px; border-radius: 30px; width: 100%; cursor: pointer; font-weight: bold; }
+        #qrcode { margin-top: 15px; display: flex; justify-content: center; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div class="card">
+    <div class="card" id="main-card">
         <h1 id="display-title">Happy Women's Day! 🌸</h1>
-        <img id="display-img" src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&q=80&w=500" alt="Flowers">
-        <p id="display-wish">Chúc bạn một ngày 8/3 rạng rỡ, hạnh phúc và nhận được thật nhiều yêu thương!</p>
-        <div id="yt-player-container"></div>
+        <img id="display-img" src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=500" alt="Ảnh chúc mừng">
+        <p id="display-wish">Chúc bạn một ngày 8/3 thật tuyệt vời!</p>
+        <div id="player-container"></div>
     </div>
 
-    <div class="controls">
-        <label>✨ Tiêu đề:</label>
-        <input type="text" id="input-title" placeholder="VD: Gửi tặng Mẹ yêu...">
-        
-        <label>✉️ Lời chúc:</label>
-        <textarea id="input-wish" rows="3" placeholder="Nhập những lời ngọt ngào nhất..."></textarea>
-        
-        <label>🖼️ Link ảnh (URL):</label>
-        <input type="text" id="input-img" placeholder="Dán link ảnh từ mạng vào đây...">
-        
-        <label>🎵 Nhạc YouTube:</label>
-        <input type="text" id="input-youtube" placeholder="Dán link YouTube (VD: https://youtu.be/...)">
-        
-        <button onclick="applyChanges()">Cập nhật Thiệp & Tạo mã QR</button>
-        
+    <div class="controls" id="admin-panel">
+        <strong>🛠 Bước 1: Nhập nội dung bạn muốn tặng</strong>
+        <input type="text" id="input-title" placeholder="Tiêu đề (VD: Tặng Vợ yêu)">
+        <textarea id="input-wish" rows="2" placeholder="Lời chúc ngọt ngào..."></textarea>
+        <input type="text" id="input-img" placeholder="Link ảnh (Chuột phải ảnh -> Copy Image Address)">
+        <input type="text" id="input-youtube" placeholder="Link YouTube (Nhạc nền)">
+        <button onclick="generateGift()">🚀 Bước 2: Tạo mã QR để gửi đi</button>
         <div id="qrcode"></div>
+        <p style="font-size: 0.8em; color: gray;">* Sau khi tạo, hãy quét thử QR. Nếu ưng ý, hãy gửi mã QR này cho người ấy!</p>
     </div>
 
     <script>
-        // Tạo hiệu ứng trái tim rơi liên tục
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('heart');
-            heart.innerHTML = ['❤️','💖','🌸','🌹'][Math.floor(Math.random() * 4)];
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = Math.random() * 3 + 3 + 's';
-            heart.style.opacity = Math.random() * 0.5 + 0.5;
-            document.body.appendChild(heart);
-            setTimeout(() => { heart.remove(); }, 6000);
-        }
-        setInterval(createHeart, 400);
+        // Hiệu ứng tim rơi
+        setInterval(() => {
+            const h = document.createElement('div'); h.classList.add('heart');
+            h.innerHTML = '❤️'; h.style.left = Math.random() * 100 + 'vw';
+            h.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.body.appendChild(h); setTimeout(() => h.remove(), 5000);
+        }, 400);
 
-        // Hàm tách ID video từ link YouTube (Kiến thức Regex trong Web CTF)
-        function extractYoutubeID(url) {
+        // Hàm xử lý dữ liệu từ URL (Quan trọng cho CTF - URL Parsing)
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('t') || params.has('w')) {
+                // Nếu có tham số trong URL -> Đây là người nhận đang xem
+                document.getElementById('admin-panel').classList.add('hidden'); // Ẩn bảng điều khiển
+                if(params.get('t')) document.getElementById('display-title').innerText = decodeURIComponent(params.get('t'));
+                if(params.get('w')) document.getElementById('display-wish').innerText = decodeURIComponent(params.get('w'));
+                if(params.get('i')) document.getElementById('display-img').src = decodeURIComponent(params.get('i'));
+                if(params.get('y')) {
+                    const vid = params.get('y');
+                    document.getElementById('player-container').innerHTML = `<iframe width="0" height="0" src="https://www.youtube.com/embed/${vid}?autoplay=1" frameborder="0" allow="autoplay"></iframe>`;
+                }
+            }
+        };
+
+        function getYTID(url) {
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
             const match = url.match(regExp);
             return (match && match[2].length === 11) ? match[2] : null;
         }
 
-        function applyChanges() {
-            const title = document.getElementById('input-title').value;
-            const wish = document.getElementById('input-wish').value;
-            const img = document.getElementById('input-img').value;
-            const ytUrl = document.getElementById('input-youtube').value;
+        function generateGift() {
+            const t = encodeURIComponent(document.getElementById('input-title').value || "Happy 8/3");
+            const w = encodeURIComponent(document.getElementById('input-wish').value || "Chúc bạn luôn hạnh phúc!");
+            const i = encodeURIComponent(document.getElementById('input-img').value || "");
+            const y = getYTID(document.getElementById('input-youtube').value) || "";
 
-            // Cập nhật giao diện
-            if (title) document.getElementById('display-title').innerText = title;
-            if (wish) document.getElementById('display-wish').innerText = wish;
-            if (img) document.getElementById('display-img').src = img;
+            // Tạo một đường link chứa toàn bộ dữ liệu (Kỹ thuật nén dữ liệu vào URL)
+            const baseUrl = window.location.href.split('?')[0];
+            const giftUrl = `${baseUrl}?t=${t}&w=${w}&i=${i}&y=${y}`;
 
-            // Xử lý nhạc YouTube
-            const videoId = extractYoutubeID(ytUrl);
-            if (videoId) {
-                // Nhúng iframe ẩn để phát nhạc
-                document.getElementById('yt-player-container').innerHTML = 
-                    `<iframe width="0" height="0" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay"></iframe>`;
-            }
-
-            // Tạo mã QR
-            const qrContainer = document.getElementById('qrcode');
-            qrContainer.innerHTML = ""; // Xóa QR cũ
-            new QRCode(qrContainer, {
-                text: window.location.href,
-                width: 150,
-                height: 150,
-                colorDark : "#d81b60",
-                colorLight : "#ffffff",
+            // Tạo mã QR với link "siêu dài" này
+            document.getElementById('qrcode').innerHTML = "";
+            new QRCode(document.getElementById("qrcode"), {
+                text: giftUrl,
+                width: 180, height: 180
             });
-
-            alert("Đã cập nhật thành công! Bạn có thể chụp màn hình QR này hoặc gửi link web cho người ấy.");
+            alert("Đã tạo xong mã QR bên dưới! Hãy quét thử để xem kết quả.");
         }
     </script>
 </body>
