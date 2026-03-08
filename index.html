@@ -3,170 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quà Tặng 8/3 - Gửi Trao Yêu Thương</title>
+    <title>Quà Tặng 8/3</title>
     <style>
         :root { --p: #ff69b4; --d: #d81b60; }
-        body { font-family: 'Arial', sans-serif; background: #fff5f7; text-align: center; color: var(--d); margin: 0; padding: 20px; overflow-x: hidden; }
-        
-        /* Hiệu ứng trái tim rơi */
+        body { font-family: 'Arial', sans-serif; background: #fff5f7; text-align: center; color: var(--d); margin: 0; padding: 20px; }
         .heart { position: fixed; top: -10px; font-size: 20px; color: var(--p); z-index: 1; animation: fall linear forwards; pointer-events: none; }
         @keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
-        
-        /* Khung thiệp */
-        .card { background: white; max-width: 450px; margin: 20px auto; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; z-index: 10; border: 2px solid #ffebee; }
-        .card h1 { font-size: 1.6em; margin-bottom: 10px; }
-        .card img { width: 100%; border-radius: 15px; margin: 15px 0; background: #fefefe; min-height: 150px; object-fit: cover; }
-        .card p { font-size: 1.1em; line-height: 1.6; color: #444; white-space: pre-wrap; }
-        
-        /* Bảng điều khiển */
-        .controls { background: white; max-width: 450px; margin: 20px auto; padding: 25px; border-radius: 20px; text-align: left; border: 2px dashed var(--p); position: relative; z-index: 20; }
-        label { font-weight: bold; font-size: 0.9em; display: block; margin-top: 10px; }
-        input, textarea { width: 93%; margin: 5px 0 15px 0; padding: 12px; border: 1px solid #f8bbd0; border-radius: 10px; font-family: inherit; }
-        
-        .btn-group { display: flex; flex-direction: column; gap: 10px; }
-        button { background: var(--p); color: white; border: none; padding: 15px; border-radius: 30px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1em; }
-        button:hover { background: var(--d); transform: translateY(-2px); }
-        
-        #result-area { margin-top: 20px; padding: 15px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; display: none; }
+        .card { background: white; max-width: 450px; margin: 20px auto; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; z-index: 10; overflow: hidden; }
+        .card img { width: 100%; border-radius: 15px; margin: 15px 0; min-height: 150px; object-fit: cover; }
+        .controls { background: white; max-width: 450px; margin: 20px auto; padding: 20px; border-radius: 15px; border: 2px dashed var(--p); text-align: left; }
+        input, textarea { width: 92%; margin: 8px 0; padding: 10px; border: 1px solid #f8bbd0; border-radius: 8px; }
+        button { background: var(--p); color: white; border: none; padding: 15px; border-radius: 30px; width: 100%; cursor: pointer; font-weight: bold; }
+        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .hidden { display: none !important; }
-        
-        /* Nhạc nền ẩn */
-        #yt-container { position: absolute; width: 0; height: 0; pointer-events: none; }
     </style>
 </head>
 <body>
-
-   <div class="card" id="main-card">
-        <div id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px;">
-            <h2 style="color: var(--d);">Bạn có 1 món quà!</h2>
-            <button onclick="openGift()" style="width: auto; padding: 10px 30px;">🎁 Mở Quà Ngay</button>
+    <div class="card" id="main-card">
+        <div id="overlay">
+            <h2 style="margin-bottom:20px;">Bạn có 1 món quà! 🎁</h2>
+            <button onclick="openGift()" style="width: auto; padding: 10px 40px;">Bấm để mở</button>
         </div>
-
         <h1 id="display-title">Happy Women's Day! 🌸</h1>
-        <img id="display-img" src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=500" alt="Ảnh 8/3">
-        <p id="display-wish">Chúc bạn một ngày 8/3 thật rạng rỡ và hạnh phúc!</p>
+        <img id="display-img" src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=500">
+        <p id="display-wish">Chúc bạn một ngày 8/3 thật hạnh phúc!</p>
         <div id="yt-container"></div>
     </div>
 
     <div class="controls" id="admin-panel">
-        <h2 style="margin-top:0; text-align:center;">Tạo Link Quà Tặng 🎁</h2>
-        
-        <label>🌸 Tên/Tiêu đề:</label>
-        <input type="text" id="input-title" placeholder="VD: Tặng mẹ yêu, Tặng công chúa của anh...">
-        
-        <label>✉️ Lời chúc ngọt ngào:</label>
-        <textarea id="input-wish" rows="3" placeholder="Viết lời chúc của bạn tại đây..."></textarea>
-        
-        <label>🖼️ Link ảnh (URL):</label>
-        <input type="text" id="input-img" placeholder="Dán link ảnh trực tiếp vào đây...">
-        
-        <label>🎵 Nhạc YouTube (Dán link bài hát):</label>
-        <input type="text" id="input-youtube" placeholder="VD: https://www.youtube.com/watch?v=...">
-        
-        <div class="btn-group">
-            <button onclick="createGiftLink()">✨ TẠO LINK VÀ SAO CHÉP</button>
-        </div>
-
-        <div id="result-area">
-            <p style="margin:0; font-size:0.9em; color:#166534;">✅ Đã tạo thành công! Hãy gửi link này cho người ấy nhé:</p>
-            <textarea id="final-link" readonly style="margin-top:10px; height:60px; font-size:0.8em; background:#fff;"></textarea>
-        </div>
+        <h3 style="text-align:center;">Cấu hình Link Tặng 🎁</h3>
+        <input type="text" id="i-t" placeholder="Tiêu đề...">
+        <textarea id="i-w" rows="2" placeholder="Lời chúc..."></textarea>
+        <input type="text" id="i-i" placeholder="Link ảnh (.jpg, .png)...">
+        <input type="text" id="i-y" placeholder="Link YouTube bài hát...">
+        <button onclick="makeLink()">TẠO & SAO CHÉP LINK</button>
+        <textarea id="final-link" style="display:none; margin-top:10px; height:40px;"></textarea>
     </div>
 
     <script>
-        // Biến lưu trữ ID video để phát sau khi nhấn nút
-let currentVideoId = "";
-
-window.onload = function() {
-    const p = new URLSearchParams(window.location.search);
-    if (p.has('t') || p.has('w') || p.has('i')) {
-        document.getElementById('admin-panel').classList.add('hidden');
-        if(p.get('t')) document.getElementById('display-title').innerText = decodeURIComponent(p.get('t'));
-        if(p.get('w')) document.getElementById('display-wish').innerText = decodeURIComponent(p.get('w'));
-        if(p.get('i')) document.getElementById('display-img').src = decodeURIComponent(p.get('i'));
-        
-        // Lưu lại ID nhạc nhưng chưa phát ngay
-        if(p.get('y')) {
-            currentVideoId = p.get('y');
-        }
-    } else {
-        // Nếu là trang tạo link, không hiện lớp phủ mở quà
-        document.getElementById('overlay').classList.add('hidden');
-    }
-};
-
-function openGift() {
-    // 1. Ẩn lớp phủ
-    document.getElementById('overlay').style.display = 'none';
-    
-    // 2. Phát nhạc (Vì người dùng đã tương tác nên trình duyệt sẽ cho phép)
-    if(currentVideoId) {
-        document.getElementById('yt-container').innerHTML = 
-            `<iframe width="0" height="0" src="https://www.youtube.com/embed/${currentVideoId}?autoplay=1&mute=0" frameborder="0" allow="autoplay"></iframe>`;
-    }
-    
-    // 3. Có thể thêm hiệu ứng pháo hoa hoặc rung nhẹ ở đây (nếu muốn)
-    alert("Chúc bạn một ngày 8/3 vui vẻ! 🎵");
-}
         // Hiệu ứng tim rơi
         setInterval(() => {
-            const h = document.createElement('div'); h.classList.add('heart');
-            h.innerHTML = ['❤️','💖','🌸','🌹'][Math.floor(Math.random()*4)];
-            h.style.left = Math.random() * 100 + 'vw';
-            h.style.animationDuration = Math.random() * 3 + 3 + 's';
-            document.body.appendChild(h); setTimeout(() => h.remove(), 6000);
+            const h = document.createElement('div'); h.classList.add('heart'); h.innerHTML = '❤️';
+            h.style.left = Math.random() * 100 + 'vw'; h.style.animationDuration = Math.random() * 3 + 3 + 's';
+            document.body.appendChild(h); setTimeout(() => h.remove(), 5000);
         }, 500);
 
-        // XỬ LÝ KHI NGƯỜI NHẬN MỞ LINK (Dân CTF gọi là URL Parsing)
+        let vId = "";
         window.onload = function() {
             const p = new URLSearchParams(window.location.search);
-            // Kiểm tra xem URL có chứa dữ liệu không
-            if (p.has('t') || p.has('w') || p.has('i')) {
-                // Ẩn bảng điều khiển để người nhận chỉ thấy thiệp
+            if (p.has('t') || p.has('w') || p.has('y')) {
                 document.getElementById('admin-panel').classList.add('hidden');
-                
-                // Giải mã dữ liệu từ link (Tránh lỗi tiếng Việt có dấu)
                 if(p.get('t')) document.getElementById('display-title').innerText = decodeURIComponent(p.get('t'));
                 if(p.get('w')) document.getElementById('display-wish').innerText = decodeURIComponent(p.get('w'));
                 if(p.get('i')) document.getElementById('display-img').src = decodeURIComponent(p.get('i'));
-                
-                // Nhúng nhạc YouTube
-                if(p.get('y')) {
-                    const vid = p.get('y');
-                    document.getElementById('yt-container').innerHTML = 
-                        `<iframe width="0" height="0" src="https://www.youtube.com/embed/${vid}?autoplay=1" frameborder="0" allow="autoplay"></iframe>`;
-                }
+                if(p.get('y')) vId = p.get('y');
+            } else {
+                document.getElementById('overlay').classList.add('hidden');
             }
         };
 
-        function getID(url) {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[2].length === 11) ? match[2] : null;
+        function openGift() {
+            document.getElementById('overlay').classList.add('hidden');
+            if(vId) {
+                document.getElementById('yt-container').innerHTML = 
+                `<iframe width="0" height="0" src="https://www.youtube.com/embed/${vId}?autoplay=1" frameborder="0" allow="autoplay"></iframe>`;
+            }
         }
 
-        function createGiftLink() {
-            // Lấy dữ liệu và mã hóa để đưa vào URL
-            const t = encodeURIComponent(document.getElementById('input-title').value || "Happy Women's Day!");
-            const w = encodeURIComponent(document.getElementById('input-wish').value || "Chúc bạn một ngày 8/3 ý nghĩa!");
-            const i = encodeURIComponent(document.getElementById('input-img').value || "");
-            const y = getID(document.getElementById('input-youtube').value) || "";
+        function makeLink() {
+            const t = encodeURIComponent(document.getElementById('i-t').value || "Happy 8/3");
+            const w = encodeURIComponent(document.getElementById('i-w').value || "Hạnh phúc nhé!");
+            const i = encodeURIComponent(document.getElementById('i-i').value || "");
+            const reg = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const m = document.getElementById('i-y').value.match(reg);
+            const y = (m && m[2].length === 11) ? m[2] : "";
 
-            // Tạo link tuyệt đối
-            const baseUrl = window.location.origin + window.location.pathname;
-            const finalLink = `${baseUrl}?t=${t}&w=${w}&i=${i}&y=${y}`;
-
-            // Hiển thị kết quả
-            document.getElementById('result-area').style.display = 'block';
-            const linkBox = document.getElementById('final-link');
-            linkBox.value = finalLink;
-
-            // Tự động sao chép vào bộ nhớ đệm
-            linkBox.select();
+            const link = window.location.origin + window.location.pathname + `?t=${t}&w=${w}&i=${i}&y=${y}`;
+            const box = document.getElementById('final-link');
+            box.value = link; box.style.display = 'block'; box.select();
             document.execCommand("copy");
-            alert("Đã tạo link và tự động sao chép! Bạn chỉ cần dán (Paste) để gửi đi thôi.");
+            alert("Đã copy link! Gửi link này cho người ấy nhé.");
         }
     </script>
 </body>
 </html>
+
 
